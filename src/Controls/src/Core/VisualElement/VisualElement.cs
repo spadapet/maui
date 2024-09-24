@@ -527,6 +527,7 @@ namespace Microsoft.Maui.Controls
 		/// </summary>
 		protected internal VisualElement()
 		{
+			VisualDiagnostics.RegisterSourceInfoFromCallStack(this);
 		}
 
 		/// <summary>

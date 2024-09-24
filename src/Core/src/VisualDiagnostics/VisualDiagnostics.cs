@@ -3,7 +3,9 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Maui.Media;
@@ -37,7 +39,7 @@ namespace Microsoft.Maui
 		/// <include file="../../docs/Microsoft.Maui/VisualDiagnostics.xml" path="//Member[@MemberName='GetXamlSourceInfo']/Docs/*" />
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static SourceInfo? GetSourceInfo(object obj) =>
-			sourceInfos.TryGetValue(obj, out var sourceinfo) ? sourceinfo : null;
+			sourceInfos.TryGetValue(obj, out var sourceInfo) ? sourceInfo : null;
 
 		public static void OnChildAdded(IVisualTreeElement parent, IVisualTreeElement child)
 		{
@@ -111,6 +113,82 @@ namespace Microsoft.Maui
 			await result.CopyToAsync(ms, format, quality);
 
 			return ms.ToArray();
+		}
+
+		[ThreadStatic]
+		private static int blockCallStack;
+
+		internal static IDisposable BlockSourceInfoFromCallStack()
+		{
+			VisualDiagnostics.blockCallStack++;
+
+			return new ActionDisposable(() => VisualDiagnostics.blockCallStack--);
+		}
+
+		internal static void RegisterSourceInfoFromCallStack(object target)
+		{
+			if (target?.GetType() is not Type targetType || !VisualDiagnostics.IsEnabled)
+				return;
+
+			switch (targetType.Name)
+			{
+				case "Border":
+					VisualDiagnostics.RegisterSourceInfo(target, new Uri(@"MainPage.xaml.cs;assembly=Maui.Controls.Sample.Sandbox", UriKind.Relative), 23, 3);
+					return;
+
+				case "Button":
+					VisualDiagnostics.RegisterSourceInfo(target, new Uri(@"MainPage.xaml.cs;assembly=Maui.Controls.Sample.Sandbox", UriKind.Relative), 13, 3);
+					return;
+
+				case "Grid":
+					VisualDiagnostics.RegisterSourceInfo(target, new Uri(@"MainPage.xaml.cs;assembly=Maui.Controls.Sample.Sandbox", UriKind.Relative), 28, 3);
+					return;
+			}
+
+			// Debug.WriteLine($"*** CREATING:{target.GetType().FullName}");
+
+			StackTrace stackTrace = new();
+			bool foundConstructor = false;
+
+			for (int i = 0; i < stackTrace.FrameCount; i++)
+			{
+				if (stackTrace.GetFrame(i) is StackFrame frame &&
+					frame.GetMethod() is MethodBase method &&
+					method.DeclaringType is Type methodType &&
+					methodType.Assembly is Assembly methodAssembly &&
+					methodAssembly.FullName is string methodAssemblyFullName)
+				{
+					// The frame after the constructor is where the target object was created
+					if (foundConstructor)
+					{
+						if (methodAssemblyFullName.StartsWith("Microsoft.Maui,", StringComparison.OrdinalIgnoreCase) ||
+							methodAssemblyFullName.StartsWith("Microsoft.Maui.", StringComparison.OrdinalIgnoreCase))
+						{
+							// Ignore elements created by MAUI itself
+							break;
+						}
+
+						if (methodAssemblyFullName.StartsWith("System.", StringComparison.OrdinalIgnoreCase))
+						{
+							// Ignore stack frames in System (like when Activator is used to construct an element)
+							continue;
+						}
+#if !NETSTANDARD2_0
+						int commaIndex = methodAssemblyFullName.IndexOf(',', StringComparison.Ordinal);
+#else
+						int commaIndex = methodAssemblyFullName.IndexOf(',');
+#endif
+						string assemblyName = (commaIndex > 0) ? methodAssemblyFullName.Substring(0, commaIndex) : methodAssemblyFullName;
+						int offset = frame.HasILOffset() ? frame.GetILOffset() : 0;
+
+						VisualDiagnostics.RegisterSourceInfo(target, new Uri($"code:{methodType.FullName}.{method.Name}, {assemblyName}, {methodAssembly.Location}"), offset + 1, 1);
+
+						break;
+					}
+					
+					foundConstructor = method.IsConstructor && methodType == targetType;
+				}
+			}
 		}
 	}
 }
