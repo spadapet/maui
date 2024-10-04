@@ -12,7 +12,7 @@ public partial class MainPage : ContentPage
 	{
 		Button button = new Button()
 		{
-			Text = "Rebuild page",
+			Text = "Click me again!",
 			HorizontalOptions = LayoutOptions.Center,
 			VerticalOptions = LayoutOptions.Center,
 			BackgroundColor = Colors.OrangeRed,
