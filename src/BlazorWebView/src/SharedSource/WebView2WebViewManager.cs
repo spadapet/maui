@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
@@ -23,19 +22,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.WebView2;
 using Microsoft.Web.WebView2.Core;
 using WebView2Control = Microsoft.Web.WebView2.WinForms.WebView2;
+using System.Reflection;
 #elif WEBVIEW2_WPF
 using System.Diagnostics;
 using Microsoft.AspNetCore.Components.WebView.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.WebView2.Core;
 using WebView2Control = Microsoft.Web.WebView2.Wpf.WebView2;
+using System.Reflection;
 #elif WEBVIEW2_MAUI
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.WebView2.Core;
 using WebView2Control = Microsoft.UI.Xaml.Controls.WebView2;
 using Launcher = Windows.System.Launcher;
-
 #endif
 
 namespace Microsoft.AspNetCore.Components.WebView.WebView2
@@ -281,26 +281,6 @@ namespace Microsoft.AspNetCore.Components.WebView.WebView2
 					}
 				};
 			")
-#if WEBVIEW2_MAUI
-				.AsTask()
-#endif
-				.ConfigureAwait(true);
-
-			string ReadEmbeddedResource(string resourceName)
-			{
-				if (Assembly.GetExecutingAssembly().GetManifestResourceStream($"Microsoft.AspNetCore.Components.WebView.Maui.{resourceName}") is Stream stream)
-				{
-					using (stream)
-					using (StreamReader reader = new StreamReader(stream))
-					{
-						return reader.ReadToEnd();
-					}
-				}
-
-				return string.Empty;
-			}
-
-			await _webview.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(ReadEmbeddedResource("VisualDiagnosticsTAP.js"))
 #if WEBVIEW2_MAUI
 				.AsTask()
 #endif

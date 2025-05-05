@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Runtime.Versioning;
 using Android.Content;
 using Android.Runtime;
@@ -119,22 +117,6 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 				// effect because once the page content loads all the document state gets reset.
 				RunBlazorStartupScripts(view);
 			}
-
-			string ReadEmbeddedResource(string resourceName)
-			{
-				if (Assembly.GetExecutingAssembly().GetManifestResourceStream($"Microsoft.AspNetCore.Components.WebView.Maui.{resourceName}") is Stream stream)
-				{
-					using (stream)
-					using (StreamReader reader = new StreamReader(stream))
-					{
-						return reader.ReadToEnd();
-					}
-				}
-
-				return string.Empty;
-			}
-
-			view?.EvaluateJavascript(ReadEmbeddedResource("VisualDiagnosticsTAP.js"), null);
 		}
 
 		private void RunBlazorStartupScripts(AWebView view)

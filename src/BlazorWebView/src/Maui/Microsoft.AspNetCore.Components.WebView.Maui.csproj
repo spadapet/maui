@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Compile Include="..\SharedSource\**\*.cs" Link="Windows\SharedSource\%(Filename)%(Extension)" />
-    <None Remove="VisualDiagnosticsTAP.js" />
     <Compile Include="..\..\..\Core\src\TaskExtensions.cs" Link="Utilities\TaskExtensions.cs" />
   </ItemGroup>
 
@@ -45,10 +44,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Controls\src\Core\Controls.Core.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\..\..\Core\src\Core.csproj" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="VisualDiagnosticsTAP.js" />
   </ItemGroup>
 
   <Import Project="$(MauiSrcDirectory)PublicAPI.targets" />
