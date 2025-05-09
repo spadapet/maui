@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 
 namespace Microsoft.AspNetCore.Components.WebView.Maui
@@ -108,5 +109,18 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 		/// <inheritdoc />
 		void IBlazorWebView.BlazorWebViewInitialized(BlazorWebViewInitializedEventArgs args) =>
 			BlazorWebViewInitialized?.Invoke(this, args);
+
+		/// <inheritdoc />
+		public async Task<string?> EvaluateJavaScriptAsync(string script)
+		{
+			if (!string.IsNullOrEmpty(script) && Handler is BlazorWebViewHandler handler)
+			{
+				EvaluateJavaScriptAsyncRequest args = new(script);
+				handler.Invoke(nameof(IBlazorWebView.EvaluateJavaScriptAsync), args);
+				return await args.Task;
+			}
+
+			return null;
+		}
 	}
 }

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Versioning;
-using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui;
-using Microsoft.Maui.Handlers;
 
 namespace Microsoft.AspNetCore.Components.WebView.Maui
 {
@@ -28,6 +26,14 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 		};
 
 		/// <summary>
+		/// This field is part of MAUI infrastructure and is not intended for use by application code.
+		/// </summary>
+		public static CommandMapper<IBlazorWebView, BlazorWebViewHandler> BlazorWebViewCommandMapper = new(ViewCommandMapper)
+		{
+			[nameof(IWebView.EvaluateJavaScriptAsync)] = MapEvaluateJavaScriptAsync,
+		};
+
+		/// <summary>
 		/// Initializes a new instance of <see cref="BlazorWebViewHandler"/> with default mappings.
 		/// </summary>
 		public BlazorWebViewHandler() : this(BlazorWebViewMapper)
@@ -38,7 +44,17 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 		/// Initializes a new instance of <see cref="BlazorWebViewHandler"/> using the specified mappings.
 		/// </summary>
 		/// <param name="mapper">The property mappings.</param>
-		public BlazorWebViewHandler(PropertyMapper? mapper) : base(mapper ?? BlazorWebViewMapper)
+		public BlazorWebViewHandler(PropertyMapper? mapper) : this(mapper ?? BlazorWebViewMapper, null)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="BlazorWebViewHandler"/> using the specified mappings.
+		/// </summary>
+		/// <param name="mapper">The property mappings.</param>
+		/// <param name="commandMapper">The command mappings.</param>
+		public BlazorWebViewHandler(PropertyMapper? mapper, CommandMapper? commandMapper = null)
+			: base(mapper ?? BlazorWebViewMapper, commandMapper ?? BlazorWebViewCommandMapper)
 		{
 		}
 

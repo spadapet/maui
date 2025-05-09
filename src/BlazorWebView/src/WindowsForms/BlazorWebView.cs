@@ -309,6 +309,11 @@ namespace Microsoft.AspNetCore.Components.WebView.WindowsForms
 			return await _webviewManager.TryDispatchAsync(workItem);
 		}
 
+		public Task<string?> EvaluateJavaScriptAsync(string script)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// Custom control collection that ensures that only the owning <see cref="BlazorWebView"/> can add
 		/// controls to it.

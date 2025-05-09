@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Maui;
 using Microsoft.Maui.Dispatching;
 using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
 using WebView2Control = Microsoft.UI.Xaml.Controls.WebView2;
 
 namespace Microsoft.AspNetCore.Components.WebView.Maui
@@ -137,6 +138,35 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 			}
 
 			return await _webviewManager.TryDispatchAsync(workItem);
+		}
+
+		public static void MapEvaluateJavaScriptAsync(BlazorWebViewHandler handler, IBlazorWebView blazorWebView, object? arg)
+		{
+			if (arg is EvaluateJavaScriptAsyncRequest request)
+			{
+				if (request.Script is string script && handler.PlatformView is var platformView)
+				{
+					async Task<string> RunAsync()
+					{
+						await platformView.EnsureCoreWebView2Async();
+						return await platformView.ExecuteScriptAsync(script);
+					};
+
+					try
+					{
+						request.RunAndReport(RunAsync());
+					}
+					catch (Exception ex)
+					{
+						// RunAsync() threw before it returned a Task
+						request.SetException(ex);
+					}
+				}
+				else
+				{
+					request.SetCanceled();
+				}
+			}
 		}
 	}
 }

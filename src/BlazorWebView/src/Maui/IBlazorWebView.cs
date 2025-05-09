@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Maui;
@@ -43,6 +44,13 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 		/// <param name="contentRootDir">The base directory to use for all requested assets, such as <c>wwwroot</c>.</param>
 		/// <returns>Returns a <see cref="IFileProvider"/> for static assets.</returns>
 		IFileProvider CreateFileProvider(string contentRootDir);
+
+		/// <summary>
+		/// On platforms that support JavaScript evaluation, evaluates script.
+		/// </summary>
+		/// <param name="script">The script to evaluate.</param>
+		/// <returns>A task that contains the result of the evaluation as a string.</returns>
+		Task<string?> EvaluateJavaScriptAsync(string script);
 
 		/// <summary>
 		/// Notifies the control that the UrlLoading event should be raised with the specified <paramref name="args"/>.
