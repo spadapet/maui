@@ -1,1 +1,6 @@
 #nullable enable
+Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebView.EvaluateJavaScriptAsync(string! script) -> System.Threading.Tasks.Task<string?>!
+Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebViewHandler.BlazorWebViewHandler(Microsoft.Maui.PropertyMapper? mapper, Microsoft.Maui.CommandMapper? commandMapper = null) -> void
+Microsoft.AspNetCore.Components.WebView.Maui.IBlazorWebView.EvaluateJavaScriptAsync(string! script) -> System.Threading.Tasks.Task<string?>!
+static Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebViewHandler.BlazorWebViewCommandMapper -> Microsoft.Maui.CommandMapper<Microsoft.AspNetCore.Components.WebView.Maui.IBlazorWebView!, Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebViewHandler!>!
+static Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebViewHandler.MapEvaluateJavaScriptAsync(Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebViewHandler! handler, Microsoft.AspNetCore.Components.WebView.Maui.IBlazorWebView! blazorWebView, object? arg) -> void

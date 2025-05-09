@@ -369,6 +369,11 @@ namespace Microsoft.AspNetCore.Components.WebView.Wpf
 			return await _webviewManager.TryDispatchAsync(workItem);
 		}
 
+		public Task<string?> EvaluateJavaScriptAsync(string script)
+		{
+			throw new NotImplementedException();
+		}
+
 		private void CheckDisposed()
 		{
 			if (_isDisposed)

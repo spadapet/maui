@@ -23,5 +23,7 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 		/// <returns>Returns a <see cref="Task"/> representing <c>true</c> if the <paramref name="workItem"/> was called, or <c>false</c> if it was not called because Blazor is not currently running.</returns>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="workItem"/> is <c>null</c>.</exception>
 		public virtual Task<bool> TryDispatchAsync(Action<IServiceProvider> workItem) => throw new NotSupportedException();
+
+		public static void MapEvaluateJavaScriptAsync(BlazorWebViewHandler handler, IBlazorWebView blazorWebView, object? arg) => throw new NotSupportedException();
 	}
 }

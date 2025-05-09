@@ -1,1 +1,2 @@
 #nullable enable
+Microsoft.AspNetCore.Components.WebView.Wpf.BlazorWebView.EvaluateJavaScriptAsync(string! script) -> System.Threading.Tasks.Task<string?>!

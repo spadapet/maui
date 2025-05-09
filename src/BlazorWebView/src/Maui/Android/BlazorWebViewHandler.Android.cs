@@ -181,5 +181,20 @@ namespace Microsoft.AspNetCore.Components.WebView.Maui
 
 			return await _webviewManager.TryDispatchAsync(workItem);
 		}
+
+		public static void MapEvaluateJavaScriptAsync(BlazorWebViewHandler handler, IBlazorWebView blazorWebView, object? arg)
+		{
+			if (arg is EvaluateJavaScriptAsyncRequest request)
+			{
+				if (request.Script is string script && handler.PlatformView is var platformView)
+				{
+					// platformView.EvaluateJavascript(script, )
+				}
+				else
+				{
+					request.SetCanceled();
+				}
+			}
+		}
 	}
 }
